@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.energy.ops.mapper.WorkOrderMapper">
+
+    <select id="selectOrderPage" resultType="com.energy.ops.vo.WorkOrderVO">
+        SELECT w.id, w.code, w.device_id, d.name AS device_name,
+               w.type, w.status, w.assignee, w.description,
+               w.create_time, w.finish_time
+        FROM work_order w
+        LEFT JOIN device d ON w.device_id = d.id
+        <where>
+            <if test="status != null">
+                AND w.status = #{status}
+            </if>
+            <if test="type != null">
+                AND w.type = #{type}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (w.code LIKE CONCAT('%', #{keyword}, '%')
+                     OR d.name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY w.id DESC
+    </select>
+
+</mapper>

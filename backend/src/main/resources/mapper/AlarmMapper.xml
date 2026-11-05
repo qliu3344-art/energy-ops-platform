@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.energy.ops.mapper.AlarmMapper">
+
+    <select id="selectAlarmPage" resultType="com.energy.ops.vo.AlarmVO">
+        SELECT a.id, a.device_id, d.name AS device_name,
+               a.level, a.content, a.status, a.create_time, a.handle_time
+        FROM alarm a
+        LEFT JOIN device d ON a.device_id = d.id
+        <where>
+            <if test="status != null">
+                AND a.status = #{status}
+            </if>
+            <if test="level != null">
+                AND a.level = #{level}
+            </if>
+        </where>
+        ORDER BY a.status ASC, a.level DESC, a.id DESC
+    </select>
+
+</mapper>

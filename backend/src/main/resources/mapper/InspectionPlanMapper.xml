@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.energy.ops.mapper.InspectionPlanMapper">
+
+    <select id="selectPlanPage" resultType="com.energy.ops.vo.InspectionPlanVO">
+        SELECT p.id, p.device_id, d.name AS device_name, p.name,
+               p.cycle_days, p.next_time, p.status
+        FROM inspection_plan p
+        LEFT JOIN device d ON p.device_id = d.id
+        <where>
+            <if test="deviceId != null">
+                AND p.device_id = #{deviceId}
+            </if>
+        </where>
+        ORDER BY p.next_time ASC
+    </select>
+
+</mapper>

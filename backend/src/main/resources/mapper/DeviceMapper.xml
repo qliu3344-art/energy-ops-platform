@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.energy.ops.mapper.DeviceMapper">
+
+    <sql id="deviceColumns">
+        d.id, d.code, d.name, d.type_id, t.name AS type_name,
+        d.station, d.status, d.install_date, d.create_time
+    </sql>
+
+    <select id="selectDevicePage" resultType="com.energy.ops.vo.DeviceVO">
+        SELECT <include refid="deviceColumns"/>
+        FROM device d
+        LEFT JOIN device_type t ON d.type_id = t.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (d.name LIKE CONCAT('%', #{keyword}, '%')
+                     OR d.code LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="typeId != null">
+                AND d.type_id = #{typeId}
+            </if>
+            <if test="status != null">
+                AND d.status = #{status}
+            </if>
+        </where>
+        ORDER BY d.id DESC
+    </select>
+
+    <select id="selectDeviceById" resultType="com.energy.ops.vo.DeviceVO">
+        SELECT <include refid="deviceColumns"/>
+        FROM device d
+        LEFT JOIN device_type t ON d.type_id = t.id
+        WHERE d.id = #{id}
+    </select>
+
+</mapper>
