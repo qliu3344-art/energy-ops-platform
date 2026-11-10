@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 对应 AlarmMapper 接口 -->
 <mapper namespace="com.energy.ops.mapper.AlarmMapper">
 
+    <!--
+      告警分页查询：联设备表拿设备名称。
+      排序规则按运维习惯来：未处理的排前面（status 升序），
+      同状态下等级高的排前面（level 降序），再按时间倒序。
+    -->
     <select id="selectAlarmPage" resultType="com.energy.ops.vo.AlarmVO">
         SELECT a.id, a.device_id, d.name AS device_name,
                a.level, a.content, a.status, a.create_time, a.handle_time

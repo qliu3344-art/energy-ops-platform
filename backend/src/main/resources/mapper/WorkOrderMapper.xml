@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 对应 WorkOrderMapper 接口，select 的 id 对应接口方法名 -->
 <mapper namespace="com.energy.ops.mapper.WorkOrderMapper">
 
+    <!--
+      工单分页查询。
+      工单表只存 device_id，前端要显示设备名称，所以联 device 表取 name。
+      device_name 会自动映射到 WorkOrderVO.deviceName。
+    -->
     <select id="selectOrderPage" resultType="com.energy.ops.vo.WorkOrderVO">
         SELECT w.id, w.code, w.device_id, d.name AS device_name,
                w.type, w.status, w.assignee, w.description,
@@ -15,11 +22,13 @@
             <if test="type != null">
                 AND w.type = #{type}
             </if>
+            <!-- 关键字同时匹配工单号和设备名，用户不用记单号也能搜到 -->
             <if test="keyword != null and keyword != ''">
                 AND (w.code LIKE CONCAT('%', #{keyword}, '%')
                      OR d.name LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
+        <!-- 新工单排前面 -->
         ORDER BY w.id DESC
     </select>
 

@@ -9,6 +9,10 @@ import com.energy.ops.vo.InspectionPlanVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 巡检计划业务层：目前只做分页查询。
+ * 计划描述「哪台设备、多久巡检一次、由谁负责」，是工单的上游。
+ */
 @Service
 @RequiredArgsConstructor
 public class InspectionPlanService {

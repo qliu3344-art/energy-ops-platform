@@ -4,6 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * 登录入参。
+ *
+ * <p>用户名或密码为空时，@Valid 会在进入 Controller 方法体之前就拦下来，
+ * 返回 400 和这里配置的提示语。
+ */
 @Data
 @Schema(description = "登录参数")
 public class LoginDTO {

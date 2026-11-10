@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 巡检计划接口：按设备查询巡检计划。
+ */
 @Tag(name = "巡检计划")
 @RestController
 @RequestMapping("/api/inspection-plans")

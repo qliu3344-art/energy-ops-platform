@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Swagger（SpringDoc）文档配置
  * 访问地址：http://localhost:8080/swagger-ui/index.html
+ *
+ * <p>SpringDoc 会扫描所有 @RestController，把接口自动生成成在线文档；
+ * 这里只是补充标题、版本这类全局信息。
  */
 @Configuration
 public class OpenApiConfig {

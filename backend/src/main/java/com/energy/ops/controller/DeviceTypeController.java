@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 设备类型字典接口。
+ *
+ * <p>它是典型的「读多写少」资源：下拉框每次打开都要读一遍，
+ * 所以读接口走了 Redis 缓存，写接口负责删缓存。
+ */
 @Tag(name = "设备类型字典")
 @RestController
 @RequestMapping("/api/device-types")

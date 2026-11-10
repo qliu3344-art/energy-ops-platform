@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 对应 InspectionPlanMapper 接口 -->
 <mapper namespace="com.energy.ops.mapper.InspectionPlanMapper">
 
+    <!--
+      巡检计划分页查询：联设备表拿设备名称。
+      按下次巡检时间升序，越快到期的排在越前面，方便运维安排。
+    -->
     <select id="selectPlanPage" resultType="com.energy.ops.vo.InspectionPlanVO">
         SELECT p.id, p.device_id, d.name AS device_name, p.name,
                p.cycle_days, p.next_time, p.status

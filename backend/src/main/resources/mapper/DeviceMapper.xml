@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  namespace 必须等于 Mapper 接口的全限定名；
+  下面每个 select 的 id 必须等于接口方法名。
+  两者对上，MyBatis 才知道这段 SQL 是给哪个方法用的。
+-->
 <mapper namespace="com.energy.ops.mapper.DeviceMapper">
 
+    <!-- 公共列片段：列表和详情共用，避免两处各写一遍 -->
     <sql id="deviceColumns">
         d.id, d.code, d.name, d.type_id, t.name AS type_name,
         d.station, d.status, d.install_date, d.create_time
     </sql>
 
+    <!--
+      分页查询。
+      resultType 指定结果映射成 DeviceVO；列名下划线转驼峰的规则由 application.yml 配置，
+      所以 type_name 会自动映射到 typeName。
+      注意：SQL 里没有 LIMIT，它由分页插件在运行时补上，并自动再发一条 COUNT。
+    -->
     <select id="selectDevicePage" resultType="com.energy.ops.vo.DeviceVO">
         SELECT <include refid="deviceColumns"/>
         FROM device d
+        <!-- LEFT JOIN 而不是 INNER JOIN：类型被删了也要能查出设备，只是类型名为空 -->
         LEFT JOIN device_type t ON d.type_id = t.id
+        <!--
+          where 标签只在内部有内容时才输出 WHERE，并自动去掉第一个多余的 AND，
+          所以前端一个筛选条件都不传时，SQL 也不会出现语法错误。
+        -->
         <where>
+            <!-- test 里是条件判断表达式，false 时这段 SQL 根本不拼接 -->
             <if test="keyword != null and keyword != ''">
+                <!-- 用 #{} 而不是 ${}：值会被预编译成占位符，防 SQL 注入 -->
                 AND (d.name LIKE CONCAT('%', #{keyword}, '%')
                      OR d.code LIKE CONCAT('%', #{keyword}, '%'))
             </if>
@@ -26,6 +46,7 @@
         ORDER BY d.id DESC
     </select>
 
+    <!-- 详情：条件固定为主键，不需要动态 SQL -->
     <select id="selectDeviceById" resultType="com.energy.ops.vo.DeviceVO">
         SELECT <include refid="deviceColumns"/>
         FROM device d

@@ -12,6 +12,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 巡检工单接口。
+ *
+ * <p>除了常规的增查，最核心的是状态流转接口：PUT /api/work-orders/{id}/status。
+ * 它的输入是「目标状态」，由 Service 判断这一步是否合法。
+ */
 @Tag(name = "巡检工单")
 @RestController
 @RequestMapping("/api/work-orders")
@@ -37,6 +43,10 @@ public class WorkOrderController {
         return Result.success(workOrderService.create(dto));
     }
 
+    /**
+     * 工单状态流转：把工单推进到目标状态。
+     * 这里是「动作型」接口（/status），不是纯资源型——动作语义用 PUT 比 POST 更合适。
+     */
     @Operation(summary = "工单状态流转（带事务）")
     @PutMapping("/{id}/status")
     public Result<Void> transition(@PathVariable Long id, @RequestBody @Valid WorkOrderStatusDTO dto) {

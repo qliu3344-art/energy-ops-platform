@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 设备告警接口：查询告警列表、标记处理。
+ */
 @Tag(name = "设备告警")
 @RestController
 @RequestMapping("/api/alarms")

@@ -4,15 +4,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { logout } from '../api/auth'
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute()    // 当前路由信息，用来做菜单高亮和标题
+const router = useRouter()  // 用来跳转
+// computed：有缓存，只有 localStorage 里的用户名变化时才重新计算
 const username = computed(() => localStorage.getItem('username') || 'admin')
 
 async function handleLogout() {
   try {
-    await logout()
+    await logout()   // 通知后端把令牌从 Redis 删掉
   } catch (e) {
-    // 令牌可能已过期，忽略
+    // 令牌可能已过期，接口报错也不影响本地退出
   }
   localStorage.removeItem('token')
   localStorage.removeItem('username')
@@ -22,9 +23,11 @@ async function handleLogout() {
 </script>
 
 <template>
+  <!-- 整体布局：左侧菜单 + 右侧头部与内容区 -->
   <el-container class="layout">
     <el-aside width="210px" class="aside">
       <div class="logo">能源运维平台</div>
+      <!-- router 模式：点菜单项相当于 router.push(index)；default-active 让当前页高亮 -->
       <el-menu
         :default-active="route.path"
         router
@@ -40,6 +43,7 @@ async function handleLogout() {
 
     <el-container>
       <el-header class="header">
+        <!-- meta.title 在路由表里配置，切换页面时标题自动跟着变 -->
         <span class="title">{{ route.meta.title || '' }}</span>
         <span class="user">
           {{ username }}
@@ -47,6 +51,7 @@ async function handleLogout() {
         </span>
       </el-header>
       <el-main class="main">
+        <!-- 子路由在这里渲染：/devices、/work-orders、/alarms 共用这个外壳 -->
         <router-view />
       </el-main>
     </el-container>
@@ -69,6 +74,7 @@ async function handleLogout() {
   font-size: 16px;
   letter-spacing: 1px;
 }
+/* :deep() 用于穿透 scoped，改 Element Plus 内部元素的样式 */
 .aside :deep(.el-menu) {
   border-right: none;
 }

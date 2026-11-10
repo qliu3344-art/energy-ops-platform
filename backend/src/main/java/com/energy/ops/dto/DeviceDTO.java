@@ -8,10 +8,18 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * 设备新增 / 修改的入参对象（DTO）。
+ *
+ * <p>为什么不直接用 Entity 接参数：Entity 里有 id、createTime 这些
+ * 不该让前端控制的字段。DTO 只暴露允许前端传的部分，
+ * 配合 {@code @Valid} 在进入业务逻辑之前就把非法数据挡掉。
+ */
 @Data
 @Schema(description = "设备新增 / 修改参数")
 public class DeviceDTO {
 
+    // @NotBlank：不能为 null、空串或纯空格；@Size：长度上限
     @NotBlank(message = "设备编码不能为空")
     @Size(max = 64, message = "设备编码不能超过 64 位")
     @Schema(description = "设备编码", example = "DEV-001")
@@ -22,6 +30,7 @@ public class DeviceDTO {
     @Schema(description = "设备名称", example = "1号主变压器")
     private String name;
 
+    // @NotNull：对象类型只校验非空，不校验空串
     @NotNull(message = "设备类型不能为空")
     @Schema(description = "设备类型 id", example = "1")
     private Long typeId;

@@ -7,6 +7,7 @@ const loading = ref(false)
 const list = ref([])
 const total = ref(0)
 
+// 查询条件：处理状态、告警等级
 const query = reactive({
   page: 1,
   size: 10,
@@ -14,13 +15,14 @@ const query = reactive({
   level: null
 })
 
+/** 加载告警列表。排序规则在后端 SQL 里：未处理优先 + 等级高的优先 */
 async function load() {
   loading.value = true
   try {
     const data = await getAlarms({
       page: query.page,
       size: query.size,
-      status: query.status ?? undefined,
+      status: query.status ?? undefined,   // ?? 保证 0（未处理）不被当成空
       level: query.level ?? undefined
     })
     list.value = data.list
@@ -41,6 +43,7 @@ function resetQuery() {
   search()
 }
 
+/** 处理告警：确认后调接口，后端会置为已处理并记录时间 */
 async function handle(row) {
   await ElMessageBox.confirm(`确定处理告警「${row.content}」吗？`, '处理告警', {
     type: 'warning'
@@ -50,6 +53,7 @@ async function handle(row) {
   load()
 }
 
+/** 等级映射成标签颜色：严重红、警告橙、提示灰 */
 function levelType(level) {
   if (level === 3) return 'danger'
   if (level === 2) return 'warning'
@@ -60,6 +64,7 @@ function fmtTime(value) {
   return value ? String(value).replace('T', ' ') : ''
 }
 
+// onMounted 直接传函数引用，等价于 onMounted(() => load())
 onMounted(load)
 </script>
 
@@ -88,6 +93,7 @@ onMounted(load)
 
       <el-table v-loading="loading" :data="list" border stripe>
         <el-table-column prop="id" label="编号" width="80" />
+        <!-- deviceName 由后端 JOIN 设备表得到 -->
         <el-table-column prop="deviceName" label="设备" min-width="140" />
         <el-table-column label="级别" width="90">
           <template #default="{ row }">
@@ -110,6 +116,7 @@ onMounted(load)
         </el-table-column>
         <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
+            <!-- 只有未处理（status === 0）才显示处理按钮 -->
             <el-button
               v-if="row.status === 0"
               link

@@ -5,6 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * 工单创建入参。
+ *
+ * <p>注意这里没有 status 字段：新建工单的状态由后端固定为「待派发」，
+ * 不允许前端自己指定，否则会绕过状态机。
+ */
 @Data
 @Schema(description = "工单创建参数")
 public class WorkOrderDTO {
